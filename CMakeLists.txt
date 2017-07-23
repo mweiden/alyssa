@@ -22,7 +22,7 @@ set(SOURCE_FILES interpreter.h interpreter.cpp environment.h)
 
 add_executable(tests test.cpp ${SOURCE_FILES})
 
-add_executable(main main.cpp ${SOURCE_FILES})
+add_executable(repl repl.cpp ${SOURCE_FILES})
 
 target_link_libraries(tests gtest gmock_main)
 add_test(NAME example_test COMMAND tests)

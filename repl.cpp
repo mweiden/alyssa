@@ -15,7 +15,7 @@ int main() {
 
     signal(SIGINT, sig_handler);
 
-    cout << "Matt's Lisp REPL" << endl;
+    cout << "Alyssa P. Hacker's LISP REPL" << endl;
 
     string expression;
 
