@@ -11,13 +11,13 @@
 using std::string;
 
 
-TEST(EnvironmentTest, SettersAndGettersTest) {
+TEST(Environment, SettersAndGettersTest) {
     Environment env = Environment("test");
     env.setVariable("'int", "1");
     EXPECT_EQ(env.getVariable("'int"), "1");
 }
 
-TEST(InterpreterTest, NextTokenTest) {
+TEST(Interpreter, NextTokenTest) {
     // should not chomp when there's no leading whitespace
     std::istringstream ss1("token ");
     EXPECT_EQ(Interpreter::nextToken(ss1), "token");
@@ -46,11 +46,11 @@ TEST(InterpreterTest, NextTokenTest) {
 }
 
 
-TEST(InterpreterTest, UnparensTest) {
+TEST(Interpreter, UnparensTest) {
     EXPECT_EQ(Interpreter::unparens("(abc)"), "abc");
 }
 
-TEST(LispInterpreterTest, StringToVectorTest) {
+TEST(LispInterpreter, StringToVectorTest) {
     std::vector<string> expected{"one", "two", "three"};
     EXPECT_EQ(LispInterpreter::stringToVector("one two three"), expected);
 }
