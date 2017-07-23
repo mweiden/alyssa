@@ -10,7 +10,7 @@ cmake --build .
 # Testing
 
 ```bash
-./test
+./tests
 ```
 
 # REPL
