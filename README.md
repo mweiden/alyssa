@@ -7,6 +7,12 @@ A basic LISP interpreter and REPL based on that described in [The Structure and 
 cmake --build .
 ```
 
+# Testing
+
+```bash
+./test
+```
+
 # REPL
 
 To use the REPL, execute `./repl` after building.
