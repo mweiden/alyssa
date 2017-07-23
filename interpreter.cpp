@@ -4,16 +4,8 @@
 #include "interpreter.h"
 
 #include <iostream>
-#include <istream>
-#include <string.h>
-#include <streambuf>
-#include <map>
-#include <vector>
-#include <typeinfo>
 #include <regex>
-#include <stdlib.h>
 #include <sstream>
-#include "environment.h"
 
 using std::string;
 using std::map;
