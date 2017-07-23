@@ -13,7 +13,7 @@ To use the REPL, execute `./repl` after building.
 
 ```lisp
 $ ./repl
-lyssa P. Hacker: LISP REPL
+Alyssa P. Hacker's LISP REPL
 >> 
 ```
 
