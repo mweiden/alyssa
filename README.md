@@ -28,7 +28,10 @@ map <- (procedure (op lst) (if (null? lst) NIL (cons (op (car lst)) (map op (cdr
 24
 >> (and true false)
 false
->>
+>> (set! x 42)
+x <- 42
+>> x
+42
 ```
 
 Note there are some slight differences in syntax from common LISP.
