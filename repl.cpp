@@ -29,7 +29,7 @@ int main() {
         string token = Interpreter::nextToken(cin);
         try {
             string result = intr.eval(token);
-            cout << result << endl;
+            cout << "\033[0;32m" << result << "\033[0m" << endl;
         }
         catch (const std::invalid_argument& ia) {
             cout << "\033[1;31m" << ia.what() << "\033[0m" << endl;
