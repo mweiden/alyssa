@@ -1,27 +1,16 @@
 #include <iostream>
-#include <csignal>
 #include "interpreter.h"
 #include "environment.h"
 
 using namespace std;
 
 
-void sig_handler(int signum) {
-    cout << "OK bye. " << signum << endl;
-    exit(0);
-}
-
 int main() {
-
-    signal(SIGINT, sig_handler);
-
-    cout << "Alyssa P. Hacker's LISP REPL" << endl;
-
-    string expression;
-
 
     Environment env = Environment("global");
     LispInterpreter intr = LispInterpreter(&env);
+
+    cout << "Alyssa P. Hacker's LISP REPL" << endl;
 
     cout << ">> ";
 
