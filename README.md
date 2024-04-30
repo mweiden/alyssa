@@ -1,5 +1,5 @@
 # alyssa
-![C/C++ CI](https://github.com/mweiden/alyssa/workflows/C/C++%20CI/badge.svg?branch=master)
+[![C/C++ CI](https://github.com/mweiden/alyssa/actions/workflows/ccpp.yml/badge.svg)](https://github.com/mweiden/alyssa/actions/workflows/ccpp.yml)
 
 A basic LISP interpreter and REPL based on that described in [The Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sicp/full-text/book/book.html).
 
