@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 #include "environment.h"
 
 using std::string;
@@ -55,7 +56,7 @@ public:
     string applyPrimitiveProcedure(string procedure, std::vector<string> args);
 
     // env management
-    Environment *extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env);
+    std::unique_ptr<Environment> extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env);
 
     // validataion
     static void validateExpression(string expression);

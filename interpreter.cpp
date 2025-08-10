@@ -113,8 +113,6 @@ string LispInterpreter::eval(string expression) {
 }
 
 string LispInterpreter::eval(string expression, Environment *env) {
-    if (envs.find(env->getName()) == envs.end()) envs[env->getName()] = env;
-
     if (isPrimitiveProcedure(expression)) {
         return expression;
     } else if (isSelfEvaluating(expression)) {
@@ -155,9 +153,9 @@ string LispInterpreter::eval(std::vector<string> expression, Environment *env) {
     }
 }
 
-Environment* LispInterpreter::extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env) {
+std::unique_ptr<Environment> LispInterpreter::extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env) {
     if (vals.size() != vars.size()) throw std::invalid_argument("Vars and vals aren't the same length!");
-    Environment *newEnv = new Environment(env->getName() + std::to_string(frameCount));
+    std::unique_ptr<Environment> newEnv(new Environment(env->getName() + std::to_string(frameCount)));
     frameCount++;
     std::map<string, string>::iterator it;
     for (it = env->begin(); it != env->end(); it++) {
@@ -174,12 +172,12 @@ string LispInterpreter::apply(string procedure, std::vector<string> arguments) {
     if (isPrimitiveProcedure(procedure)) {
         return applyPrimitiveProcedure(procedure, arguments);
     } else if (isCompoundProcedure(procedureVec)) {
-        Environment *extendedEnv = extendEnvironment(
+        auto extendedEnv = extendEnvironment(
                 procedureParams(procedureVec),
                 arguments,
                 procedureEnv(procedureVec)
         );
-        string result = eval(procedureBody(procedureVec), extendedEnv);
+        string result = eval(procedureBody(procedureVec), extendedEnv.get());
         return result;
     } else {
         throw std::invalid_argument("Unkown procedure type -- APPLY \"" + procedure + "\"");
