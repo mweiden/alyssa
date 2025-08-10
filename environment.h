@@ -6,6 +6,7 @@
 #define ENVIRONMENT_H
 
 #include <map>
+#include <stdexcept>
 
 using std::string;
 using std::map;
@@ -30,7 +31,11 @@ public:
     }
 
     string getVariable(string name) {
-        return env[name];
+        auto it = env.find(name);
+        if (it == env.end()) {
+            throw std::out_of_range("Variable '" + name + "' not found in environment '" + this->name + "'");
+        }
+        return it->second;
     }
 
     const std::map<string,string>::iterator begin() {
