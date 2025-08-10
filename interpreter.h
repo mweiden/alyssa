@@ -10,6 +10,7 @@
 #include <string>
 #include <memory>
 #include "environment.h"
+#include "symbol_table.h"
 
 using std::string;
 using std::map;
@@ -17,7 +18,7 @@ using std::map;
 
 class Interpreter {
 public:
-    static string nextToken(std::istream &in);
+    static Symbol nextToken(std::istream &in);
 
     static string unparens(string expression);
 

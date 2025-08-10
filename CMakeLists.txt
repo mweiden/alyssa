@@ -32,7 +32,7 @@ endif()
 # Project Conf
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES interpreter.h interpreter.cpp environment.h)
+set(SOURCE_FILES interpreter.h interpreter.cpp environment.h symbol_table.h symbol_table.cpp)
 
 add_executable(tests test.cpp ${SOURCE_FILES})
 

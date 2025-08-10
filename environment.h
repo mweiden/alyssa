@@ -7,6 +7,7 @@
 
 #include <map>
 #include <stdexcept>
+#include "symbol_table.h"
 
 using std::string;
 using std::map;
@@ -26,28 +27,38 @@ public:
         return name;
     }
 
-    void setVariable(string name, string value) {
+    // symbol-based interface
+    void setVariable(Symbol name, const string &value) {
         env[name] = value;
     }
 
-    string getVariable(string name) {
+    string getVariable(Symbol name) {
         auto it = env.find(name);
         if (it == env.end()) {
-            throw std::out_of_range("Variable '" + name + "' not found in environment '" + this->name + "'");
+            throw std::out_of_range("Variable '" + symbolToString(name) + "' not found in environment '" + this->name + "'");
         }
         return it->second;
     }
 
-    const std::map<string,string>::iterator begin() {
+    // string convenience wrappers
+    void setVariable(const string &name, const string &value) {
+        setVariable(stringToSymbol(name), value);
+    }
+
+    string getVariable(const string &name) {
+        return getVariable(stringToSymbol(name));
+    }
+
+    std::map<Symbol,string>::iterator begin() {
         return env.begin();
     };
 
-    const std::map<string,string>::iterator end() {
+    std::map<Symbol,string>::iterator end() {
         return env.end();
     };
 
 private:
-    map<string, string> env;
+    map<Symbol, string> env;
     string name;
 };
 

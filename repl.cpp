@@ -16,7 +16,7 @@ int main() {
     cout << ">> ";
 
     while(not cin.eof()) {
-        string token = Interpreter::nextToken(cin);
+        string token = symbolToString(Interpreter::nextToken(cin));
         try {
             string result = intr.eval(token);
             cout << "\033[0;32m" << result << "\033[0m" << endl;
