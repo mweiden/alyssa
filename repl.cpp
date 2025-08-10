@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include "interpreter.h"
 #include "environment.h"
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <regex>
 #include <sstream>
+#include <stdexcept>
 
 using std::string;
 using std::map;
@@ -30,7 +31,7 @@ T reduce(const std::vector<T> &data,
     Iterator it = data.cbegin() + leftOffset;
     Iterator end = data.cend() - rightOffset;
     if (it == end) {
-        throw 0;
+        throw std::invalid_argument("empty sequence");
     } else {
         T accumulator = *it;
         ++it;

@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <stdexcept>
 #include "interpreter.h"
 #include "environment.h"
 
@@ -67,6 +68,11 @@ TEST(LispInterpreter, IsNumTest) {
     EXPECT_FALSE(LispInterpreter::isFloat(".1"));
     EXPECT_TRUE(LispInterpreter::isFloat("0.1"));
     EXPECT_FALSE(LispInterpreter::isFloat("1..0"));
+}
+
+TEST(LispInterpreter, ArithmeticEmptySequenceThrows) {
+    std::vector<string> empty;
+    EXPECT_THROW(LispInterpreter::arithmetic("+", empty), std::invalid_argument);
 }
 
 TEST(LispInterpreter, IsQuotedStringTest) {
