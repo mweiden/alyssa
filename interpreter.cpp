@@ -44,24 +44,23 @@ T reduce(const std::vector<T> &data,
 
 // Interpreter
 string Interpreter::nextToken(std::istream &in) {
-    int i = 0;
-    char current;
+    int current;
     string token = "";
 
     // chew off leading spaces
-    do { current = in.get(); } while (isspace(current));
+    do { current = in.get(); } while (current not_eq EOF and isspace(current));
 
     if (current == '(') {
         int openParens = 0;
         do {
             if (current == '(') openParens++;
             if (current == ')') openParens--;
-            token += current;
+            token += static_cast<char>(current);
             current = in.get();
-        } while (openParens > 0 and current not_eq '\0' and current not_eq EOF);
+        } while (openParens > 0 and current not_eq EOF);
     } else {
-        while (current not_eq '\0' and current not_eq EOF and isgraph(current)) {
-            token += current;
+        while (current not_eq EOF and isgraph(current)) {
+            token += static_cast<char>(current);
             current = in.get();
         }
     }
