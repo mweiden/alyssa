@@ -203,16 +203,15 @@ std::vector<string> LispInterpreter::listOfValues(std::vector<string> operands, 
 void LispInterpreter::validateExpression(string expression) {
     int parens = 0;
     int i = 0;
-    for (int i = 0; i < expression.length(); i++) {
+    for (; i < static_cast<int>(expression.length()); i++) {
         char c = expression[i];
         if (c == '(') parens++;
         else if (c == ')') parens--;
         if (parens < 0) break;
-        i++;
     }
     if (parens != 0) {
-        string buffer(" ", i);
-        throw std::invalid_argument("Unmatched parens!\n" + expression + "\n" + buffer + "\033[1;31m^\033[0m");
+        std::string highlight = std::string(i, ' ') + "\033[1;31m^\033[0m";
+        throw std::invalid_argument("Unmatched parens!\n" + expression + "\n" + highlight);
     }
 }
 
