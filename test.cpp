@@ -17,32 +17,39 @@ TEST(Environment, SettersAndGettersTest) {
     EXPECT_EQ(env.getVariable("'int"), "1");
 }
 
+TEST(Environment, SymbolKeyStoresStringValue) {
+    Environment env("test");
+    Symbol name = stringToSymbol("'foo");
+    env.setVariable(name, "bar");
+    EXPECT_EQ(env.getVariable(name), "bar");
+}
+
 TEST(Interpreter, NextTokenTest) {
     // should not chomp when there's no leading whitespace
     std::istringstream ss1("token ");
-    EXPECT_EQ(Interpreter::nextToken(ss1), "token");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss1)), "token");
 
     // should end on \0
     std::istringstream ss2("  token");
-    EXPECT_EQ(Interpreter::nextToken(ss2), "token");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss2)), "token");
 
     // should end on whitespace
     std::istringstream ss3("  token\n");
     std::istringstream ss4(" token token2");
-    EXPECT_EQ(Interpreter::nextToken(ss3), "token");
-    EXPECT_EQ(Interpreter::nextToken(ss4), "token");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss3)), "token");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss4)), "token");
 
     // should end on EOF
     const char tokenStr[] = {' ', ' ', 't', 'o', 'k', 'e', 'n', EOF};
     std::istringstream ss5(tokenStr);
-    EXPECT_EQ(Interpreter::nextToken(ss5), "token");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss5)), "token");
 
     // should respect perens
     std::istringstream ss6("(hi hello bye goodbye)");
     std::istringstream ss7("(hi hello) (bye goodbye)");
-    EXPECT_EQ(Interpreter::nextToken(ss6), "(hi hello bye goodbye)");
-    EXPECT_EQ(Interpreter::nextToken(ss7), "(hi hello)");
-    EXPECT_EQ(Interpreter::nextToken(ss7), "(bye goodbye)");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss6)), "(hi hello bye goodbye)");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss7)), "(hi hello)");
+    EXPECT_EQ(symbolToString(Interpreter::nextToken(ss7)), "(bye goodbye)");
 }
 
 

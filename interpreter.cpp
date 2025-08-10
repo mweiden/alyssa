@@ -44,7 +44,7 @@ T reduce(const std::vector<T> &data,
 
 
 // Interpreter
-string Interpreter::nextToken(std::istream &in) {
+Symbol Interpreter::nextToken(std::istream &in) {
     int current;
     string token = "";
 
@@ -65,7 +65,7 @@ string Interpreter::nextToken(std::istream &in) {
             current = in.get();
         }
     }
-    return token;
+    return stringToSymbol(token);
 }
 
 
@@ -157,8 +157,7 @@ std::unique_ptr<Environment> LispInterpreter::extendEnvironment(std::vector<stri
     if (vals.size() != vars.size()) throw std::invalid_argument("Vars and vals aren't the same length!");
     std::unique_ptr<Environment> newEnv(new Environment(env->getName() + std::to_string(frameCount)));
     frameCount++;
-    std::map<string, string>::iterator it;
-    for (it = env->begin(); it != env->end(); it++) {
+    for (auto it = env->begin(); it != env->end(); ++it) {
         newEnv->setVariable(it->first, it->second);
     }
     for (int i = 0; i < vars.size(); i++) {
@@ -285,12 +284,12 @@ string LispInterpreter::evalDefinition(std::vector<string> expression, Environme
 
 std::vector<string> LispInterpreter::stringToVector(string expressions) {
     std::istringstream ss(expressions);
-    string token = Interpreter::nextToken(ss);
+    string token = symbolToString(Interpreter::nextToken(ss));
 
     std::vector<string> ret{};
     while (token not_eq "") {
         ret.emplace_back(token);
-        token = Interpreter::nextToken(ss);
+        token = symbolToString(Interpreter::nextToken(ss));
     }
     return ret;
 }

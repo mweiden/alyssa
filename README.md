@@ -3,29 +3,30 @@
 
 A basic LISP interpreter and REPL based on that described in [The Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sicp/full-text/book/book.html).
 
-# Building
+## Building
 
 ```bash
-cmake --build .
+cmake -S . -B build
+cmake --build build
 ```
 
-# Testing
+## Testing
 
 ```bash
-./tests
+ctest --test-dir build
 ```
 
-# REPL
+## REPL
 
-To use the REPL, execute `./repl` after building.
+To use the REPL, execute `./repl` from the build directory after building.
 
 ```lisp
 $ ./repl
 Alyssa P. Hacker's LISP REPL
->> 
+>>
 ```
 
-Here you have access to basic LISP pimitives, arithmetic operations, and boolean operations.
+Here you have access to basic LISP primitives, arithmetic operations, and boolean operations.
 
 ```lisp
 >> (set! x 42)

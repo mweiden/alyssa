@@ -1,43 +1,34 @@
-# Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-endif()
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "Build step for googletest failed: ${result}")
-endif()
+cmake_minimum_required(VERSION 3.14)
 
-# Prevent overriding the parent project's compiler/linker
-# settings on Windows
+project(alyssa VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+# For Windows: prevent overriding parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-# Add googletest directly to our build. This defines
-# the gtest and gtest_main targets.
-add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
-                 ${CMAKE_BINARY_DIR}/googletest-build)
+add_library(alyssa_lib
+  interpreter.cpp
+  interpreter.h
+  environment.h
+  symbol_table.cpp
+  symbol_table.h
+)
+target_include_directories(alyssa_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
-  include_directories("${gtest_SOURCE_DIR}/include")
-endif()
+add_executable(repl repl.cpp)
+target_link_libraries(repl PRIVATE alyssa_lib)
 
-# Project Conf
-set(CMAKE_CXX_STANDARD 11)
+add_executable(tests test.cpp)
+target_link_libraries(tests PRIVATE alyssa_lib GTest::gmock_main GTest::gtest)
 
-set(SOURCE_FILES interpreter.h interpreter.cpp environment.h)
-
-add_executable(tests test.cpp ${SOURCE_FILES})
-
-add_executable(repl repl.cpp ${SOURCE_FILES})
-
-# Now simply link against gtest or gtest_main as needed. Eg
-target_link_libraries(tests gtest gmock_main)
-add_test(NAME example_test COMMAND tests)
+enable_testing()
+add_test(NAME all_tests COMMAND tests)
