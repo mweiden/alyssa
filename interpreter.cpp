@@ -235,6 +235,9 @@ bool LispInterpreter::isPrimitiveProcedure(string name) {
 }
 
 string LispInterpreter::evalSequence(std::vector<string> expressions, Environment *env) {
+    if (expressions.empty()) {
+        return "NIL";
+    }
     string ret;
     for (auto const &expression: expressions) {
         ret = eval(expression, env);

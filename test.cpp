@@ -235,6 +235,13 @@ TEST(LispInterpreter, EvalSequenceTest) {
     EXPECT_EQ(intr.evalSequence(vec, &env), "true");
 }
 
+TEST(LispInterpreter, EvalSequenceEmptyTest) {
+    Environment env = Environment("test");
+    LispInterpreter intr = LispInterpreter(&env);
+    std::vector<string> vec{};
+    EXPECT_EQ(intr.evalSequence(vec, &env), "NIL");
+}
+
 TEST(LispInterpreter, EvalAssignmentTest) {
     Environment env = Environment("test");
     LispInterpreter intr = LispInterpreter(&env);
