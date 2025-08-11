@@ -19,6 +19,8 @@ add_library(alyssa_lib
   interpreter.cpp
   interpreter.h
   environment.h
+  symbol_table.cpp
+  symbol_table.h
 )
 target_include_directories(alyssa_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
