@@ -13,7 +13,7 @@ using std::map;
 
 
 // helper functions
-bool simpleMatch(string rxStr, string expression) {
+bool simpleMatch(const string &rxStr, const string &expression) {
     std::regex rx(rxStr);
     std::smatch match;
     std::regex_match(expression, match, rx);
@@ -69,7 +69,7 @@ Symbol Interpreter::nextToken(std::istream &in) {
 }
 
 
-string Interpreter::unparens(string expression) {
+string Interpreter::unparens(const string &expression) {
     if (expression[0] == '(') {
         string s(expression.begin() + 1, expression.end() - 1);
         return s;
@@ -108,11 +108,11 @@ LispInterpreter::~LispInterpreter() {
     envs.clear();
 }
 
-string LispInterpreter::eval(string expression) {
+string LispInterpreter::eval(const string &expression) {
     return eval(expression, envs[globalEnvName]);
 }
 
-string LispInterpreter::eval(string expression, Environment *env) {
+string LispInterpreter::eval(const string &expression, Environment *env) {
     if (isPrimitiveProcedure(expression)) {
         return expression;
     } else if (isSelfEvaluating(expression)) {
@@ -129,7 +129,7 @@ string LispInterpreter::eval(string expression, Environment *env) {
     }
 }
 
-string LispInterpreter::eval(std::vector<string> expression, Environment *env) {
+string LispInterpreter::eval(const std::vector<string> &expression, Environment *env) {
 
     if (isAssignment(expression)) {
         return evalAssignment(expression, env);
@@ -153,7 +153,7 @@ string LispInterpreter::eval(std::vector<string> expression, Environment *env) {
     }
 }
 
-std::unique_ptr<Environment> LispInterpreter::extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env) {
+std::unique_ptr<Environment> LispInterpreter::extendEnvironment(const std::vector<string> &vars, const std::vector<string> &vals, Environment *env) {
     if (vals.size() != vars.size()) throw std::invalid_argument("Vars and vals aren't the same length!");
     std::unique_ptr<Environment> newEnv(new Environment(env->getName() + std::to_string(frameCount)));
     frameCount++;
@@ -166,7 +166,7 @@ std::unique_ptr<Environment> LispInterpreter::extendEnvironment(std::vector<stri
     return newEnv;
 }
 
-string LispInterpreter::apply(string procedure, std::vector<string> arguments) {
+string LispInterpreter::apply(const string &procedure, const std::vector<string> &arguments) {
     std::vector<string> procedureVec = stringToVector(unparens(procedure));
     if (isPrimitiveProcedure(procedure)) {
         return applyPrimitiveProcedure(procedure, arguments);
@@ -183,7 +183,7 @@ string LispInterpreter::apply(string procedure, std::vector<string> arguments) {
     }
 }
 
-std::vector<string> LispInterpreter::listOfValues(std::vector<string> operands, Environment *env) {
+std::vector<string> LispInterpreter::listOfValues(const std::vector<string> &operands, Environment *env) {
     if (operands.size() == 0) {
         std::vector<string> empty{"NIL"};
         return empty;
@@ -197,7 +197,7 @@ std::vector<string> LispInterpreter::listOfValues(std::vector<string> operands, 
 }
 
 
-void LispInterpreter::validateExpression(string expression) {
+void LispInterpreter::validateExpression(const string &expression) {
     int parens = 0;
     int i = 0;
     for (; i < static_cast<int>(expression.length()); i++) {
@@ -212,28 +212,28 @@ void LispInterpreter::validateExpression(string expression) {
     }
 }
 
-std::vector<string> LispInterpreter::procedureParams(std::vector<string> procedure) {
+std::vector<string> LispInterpreter::procedureParams(const std::vector<string> &procedure) {
     return stringToVector(unparens(validatedPositionalGetEq(procedure, 4, "PROCEDURE", 1)));
 }
 
-string LispInterpreter::procedureBody(std::vector<string> procedure) {
+string LispInterpreter::procedureBody(const std::vector<string> &procedure) {
     return validatedPositionalGetEq(procedure, 4, "PROCEDURE", 2);
 }
 
-Environment* LispInterpreter::procedureEnv(std::vector<string> procedure) {
+Environment* LispInterpreter::procedureEnv(const std::vector<string> &procedure) {
     string name = LispInterpreter::validatedPositionalGetEq(procedure, 4, "PROCEDURE", 3);
     return envs[name];
 }
 
-string LispInterpreter::applyPrimitiveProcedure(string procedure, std::vector<string> args) {
+string LispInterpreter::applyPrimitiveProcedure(const string &procedure, const std::vector<string> &args) {
     return primitiveProcedures[procedure](procedure, args);
 }
 
-bool LispInterpreter::isPrimitiveProcedure(string name) {
+bool LispInterpreter::isPrimitiveProcedure(const string &name) {
     return primitiveProcedures.find(name) != primitiveProcedures.end();
 }
 
-string LispInterpreter::evalSequence(std::vector<string> expressions, Environment *env) {
+string LispInterpreter::evalSequence(const std::vector<string> &expressions, Environment *env) {
     if (expressions.empty()) {
         return "NIL";
     }
@@ -244,7 +244,7 @@ string LispInterpreter::evalSequence(std::vector<string> expressions, Environmen
     return ret;
 }
 
-string LispInterpreter::makeProcedure(string parameters, string body, string envName) {
+string LispInterpreter::makeProcedure(const string &parameters, const string &body, const string &envName) {
     std::vector<string> procedure{parameters};
     procedure.insert(procedure.begin(), "procedure");
     procedure.push_back(body);
@@ -252,15 +252,15 @@ string LispInterpreter::makeProcedure(string parameters, string body, string env
     return list(procedure);
 }
 
-bool LispInterpreter::isTrue(string expression) {
+bool LispInterpreter::isTrue(const string &expression) {
     return expression == "true";
 }
 
-bool LispInterpreter::isFalse(string expression) {
+bool LispInterpreter::isFalse(const string &expression) {
     return expression == "false";
 }
 
-string LispInterpreter::evalIf(std::vector<string> expression, Environment *env) {
+string LispInterpreter::evalIf(const std::vector<string> &expression, Environment *env) {
     if (isTrue(eval(ifPredicate(expression), env))) {
         return eval(ifConsequent(expression), env);
     } else {
@@ -268,21 +268,21 @@ string LispInterpreter::evalIf(std::vector<string> expression, Environment *env)
     }
 }
 
-string LispInterpreter::evalAssignment(std::vector<string> expression, Environment *env) {
+string LispInterpreter::evalAssignment(const std::vector<string> &expression, Environment *env) {
     string var = assignmentVariable(expression);
     string val = eval(assignmentValue(expression), env);
     env->setVariable(var, val);
     return var + " <- " + val;
 }
 
-string LispInterpreter::evalDefinition(std::vector<string> expression, Environment *env) {
+string LispInterpreter::evalDefinition(const std::vector<string> &expression, Environment *env) {
     string var = definitionVariable(expression);
     string val = eval(definitionValue(expression), env);
     env->setVariable(var, val);
     return var + " <- " + val;
 }
 
-std::vector<string> LispInterpreter::stringToVector(string expressions) {
+std::vector<string> LispInterpreter::stringToVector(const string &expressions) {
     std::istringstream ss(expressions);
     string token = symbolToString(Interpreter::nextToken(ss));
 
@@ -294,16 +294,16 @@ std::vector<string> LispInterpreter::stringToVector(string expressions) {
     return ret;
 }
 
-string LispInterpreter::vecToString(std::vector<string> args) {
+string LispInterpreter::vecToString(const std::vector<string> &args) {
     string listStr = "";
-    for (std::vector<string>::iterator it = args.begin(); it < args.end(); it++) {
+    for (auto it = args.begin(); it < args.end(); ++it) {
         listStr += *it;
         if (it != (args.end() - 1)) listStr += " ";
     }
     return listStr;
 }
 
-bool LispInterpreter::isTaggedList(std::vector<string> list, string tag) {
+bool LispInterpreter::isTaggedList(const std::vector<string> &list, const string &tag) {
     if (list.size() > 0) {
         return list[0] == tag;
     } else {
@@ -311,15 +311,15 @@ bool LispInterpreter::isTaggedList(std::vector<string> list, string tag) {
     }
 }
 
-bool LispInterpreter::isDefinition(std::vector<string> expression) {
+bool LispInterpreter::isDefinition(const std::vector<string> &expression) {
     return isTaggedList(expression, "define");
 }
 
-bool LispInterpreter::isCompoundProcedure(std::vector<string> expression) {
+bool LispInterpreter::isCompoundProcedure(const std::vector<string> &expression) {
     return isTaggedList(expression, "procedure");
 }
 
-string LispInterpreter::definitionVariable(std::vector<string> expression) {
+string LispInterpreter::definitionVariable(const std::vector<string> &expression) {
     if (expression.size() != 3) throw std::invalid_argument("Not a valid definition!");
     if (isVariable(expression[1])) {
         return expression[1];
@@ -328,7 +328,7 @@ string LispInterpreter::definitionVariable(std::vector<string> expression) {
     }
 }
 
-std::vector<string> LispInterpreter::definitionValue(std::vector<string> expression) {
+std::vector<string> LispInterpreter::definitionValue(const std::vector<string> &expression) {
     if (expression.size() != 3) throw std::invalid_argument("Not a valid definition!");
     if (isVariable(expression[1])) {
         return stringToVector(unparens(expression[2]));
@@ -339,7 +339,7 @@ std::vector<string> LispInterpreter::definitionValue(std::vector<string> express
     }
 }
 
-string LispInterpreter::list(std::vector<string> args) {
+string LispInterpreter::list(const std::vector<string> &args) {
     if (args.size() < 1) return "NIL";
     string listStr = "";
     for (auto const &value: args) {
@@ -353,28 +353,28 @@ string LispInterpreter::list(std::vector<string> args) {
     return listStr;
 }
 
-string LispInterpreter::list(string name, std::vector<string> args) {
+string LispInterpreter::list(const string &name, const std::vector<string> &args) {
     return list(args);
 }
 
-string LispInterpreter::car(string name, std::vector<string> seq) {
+string LispInterpreter::car(const string &name, const std::vector<string> &seq) {
     if (seq[0] == "NIL" or seq[0] == "()") return "NIL";
     return stringToVector(unparens(seq[0]))[0];
 }
 
-string LispInterpreter::cdr(string name, std::vector<string> seq) {
+string LispInterpreter::cdr(const string &name, const std::vector<string> &seq) {
     if (seq[0] == "NIL" or seq[0] == "()") return "NIL";
     std::vector<string> unpacked = stringToVector(unparens(seq[0]));
     unpacked.erase(unpacked.begin(), unpacked.begin() + 1);
     return list(unpacked);
 }
 
-string LispInterpreter::cons(string name, std::vector<string> seq) {
+string LispInterpreter::cons(const string &name, const std::vector<string> &seq) {
     if (seq.size() != 2) throw std::invalid_argument("Not a valid pair!");
     return cons(seq[0], seq[1]);
 }
 
-string LispInterpreter::cons(string first, string second) {
+string LispInterpreter::cons(const string &first, const string &second) {
     if (second == "NIL") {
         return "(" + first + ")";
     } else if (second[0] == '(') {
@@ -386,20 +386,20 @@ string LispInterpreter::cons(string first, string second) {
     }
 }
 
-string LispInterpreter::isNull(string name, std::vector<string> seq) {
+string LispInterpreter::isNull(const string &name, const std::vector<string> &seq) {
     return seq.size() == 1 && seq[0] == "NIL" ? "true" : "false";
 }
 
-bool LispInterpreter::isNull(string expression) {
+bool LispInterpreter::isNull(const string &expression) {
     return "NIL" == expression;
 }
 
-string LispInterpreter::isEq(string name, std::vector<string> seq) {
+string LispInterpreter::isEq(const string &name, const std::vector<string> &seq) {
     if (seq.size() != 2) throw std::invalid_argument("Not a valid equality statement!");
     return seq[0] == seq[1] ? "true" : "false";
 }
 
-string LispInterpreter::arithmetic(string name, std::vector<string> seq) {
+string LispInterpreter::arithmetic(const string &name, const std::vector<string> &seq) {
     bool castFloat = std::find_if(seq.begin(), seq.end(), [](string s) -> bool { return isFloat(s); }) != seq.end();
     if (castFloat) {
         std::vector<double> nums;
@@ -413,7 +413,7 @@ string LispInterpreter::arithmetic(string name, std::vector<string> seq) {
 }
 
 template<typename T>
-string LispInterpreter::arithmetic(string name, std::vector<T> seq) {
+string LispInterpreter::arithmetic(const string &name, const std::vector<T> &seq) {
     T result;
     T (*add)(T, T) = [](T t1, T t2) -> T { return t1 + t2; };
     T (*mult)(T, T) = [](T t1, T t2) -> T { return t1 * t2; };
@@ -431,7 +431,7 @@ string LispInterpreter::arithmetic(string name, std::vector<T> seq) {
     return std::to_string(result);
 }
 
-string LispInterpreter::boolean(string name, std::vector<string> seq) {
+string LispInterpreter::boolean(const string &name, const std::vector<string> &seq) {
     std::vector<bool> bools;
     for (int i = 0; i < seq.size(); i++) {
         if (seq[i] != "true" and seq[i] != "false") throw std::invalid_argument("Not a valid bool! \"" + seq[i] + "\"");
@@ -453,72 +453,72 @@ string LispInterpreter::boolean(string name, std::vector<string> seq) {
     return result;
 }
 
-bool LispInterpreter::isLambda(std::vector<string> expression) {
+bool LispInterpreter::isLambda(const std::vector<string> &expression) {
     return isTaggedList(expression, "lambda");
 }
 
-string LispInterpreter::lambdaParameters(std::vector<string> expression) {
+string LispInterpreter::lambdaParameters(const std::vector<string> &expression) {
     return LispInterpreter::validatedPositionalGetEq(expression, 3, "LAMBDA", 1);
 }
 
-string LispInterpreter::lambdaBody(std::vector<string> expression) {
+string LispInterpreter::lambdaBody(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 3, "LAMBDA", 2);
 }
 
-std::vector<string> LispInterpreter::makeLambda(string parameters, string body) {
+std::vector<string> LispInterpreter::makeLambda(const string &parameters, const string &body) {
     std::vector<string> lexp{"lambda", parameters};
     lexp.emplace_back(body);
     return lexp;
 }
 
-bool LispInterpreter::isAssignment(std::vector<string> expression) {
+bool LispInterpreter::isAssignment(const std::vector<string> &expression) {
     return isTaggedList(expression, "set!");
 }
 
-string LispInterpreter::assignmentVariable(std::vector<string> expression) {
+string LispInterpreter::assignmentVariable(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 3, "ASSIGNMENT", 1);
 }
 
-string LispInterpreter::assignmentValue(std::vector<string> expression) {
+string LispInterpreter::assignmentValue(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 3, "ASSIGNMENT", 2);
 }
 
-bool LispInterpreter::isBegin(std::vector<string> expression) {
+bool LispInterpreter::isBegin(const std::vector<string> &expression) {
     return isTaggedList(expression, "begin");
 }
 
-std::vector<string> LispInterpreter::beginActions(std::vector<string> expression) {
+std::vector<string> LispInterpreter::beginActions(const std::vector<string> &expression) {
     std::vector<string> actions(expression.begin() + 1, expression.end());
     return actions;
 }
 
-bool LispInterpreter::isCondition(std::vector<string> expression) {
+bool LispInterpreter::isCondition(const std::vector<string> &expression) {
     return isTaggedList(expression, "cond");
 }
 
-std::vector<string> LispInterpreter::condClauses(std::vector<string> expression) {
+std::vector<string> LispInterpreter::condClauses(const std::vector<string> &expression) {
     std::vector<string> clauses(expression.begin() + 1, expression.end());
     return clauses;
 }
 
-bool LispInterpreter::isCondElseClause(std::vector<string> expression) {
+bool LispInterpreter::isCondElseClause(const std::vector<string> &expression) {
     return isTaggedList(expression, "else");
 }
 
-string LispInterpreter::condPredicate(std::vector<string> expression) {
+string LispInterpreter::condPredicate(const std::vector<string> &expression) {
     return validatedPositionalGetGe(expression, 2, "COND-PREDICATE", 0);
 }
 
-std::vector<string> LispInterpreter::condActions(std::vector<string> expression) {
+std::vector<string> LispInterpreter::condActions(const std::vector<string> &expression) {
     std::vector<string> actions(expression.begin() + 1, expression.end());
     return actions;
 }
 
-string LispInterpreter::condToIf(std::vector<string> expression) {
+string LispInterpreter::condToIf(const std::vector<string> &expression) {
     return expandClauses(condClauses(expression));
 }
 
-string LispInterpreter::expandClauses(std::vector<string> clauses) {
+string LispInterpreter::expandClauses(const std::vector<string> &clauses) {
     if (clauses.size() == 0) {
         return "false";
     } else {
@@ -536,12 +536,12 @@ string LispInterpreter::expandClauses(std::vector<string> clauses) {
     }
 }
 
-string LispInterpreter::makeIf(string predicate, string consequent, string alternative) {
+string LispInterpreter::makeIf(const string &predicate, const string &consequent, const string &alternative) {
     std::vector<string> expression{"if", predicate, consequent, alternative};
     return list(expression);
 }
 
-string LispInterpreter::sequenceToExpression(std::vector<string> seq) {
+string LispInterpreter::sequenceToExpression(const std::vector<string> &seq) {
     if (seq.size() == 0) {
         return "NIL";
     } else if (seq.size() == 1) {
@@ -551,52 +551,52 @@ string LispInterpreter::sequenceToExpression(std::vector<string> seq) {
     }
 }
 
-bool LispInterpreter::isApplication(std::vector<string> expression) {
+bool LispInterpreter::isApplication(const std::vector<string> &expression) {
     return expression.size() > 1;
 }
 
-string LispInterpreter::getOperator(std::vector<string> expression) {
+string LispInterpreter::getOperator(const std::vector<string> &expression) {
     return validatedPositionalGetGe(expression, 1, "OPERATOR-STATEMENT", 0);
 }
 
-std::vector<string> LispInterpreter::getOperands(std::vector<string> expression) {
+std::vector<string> LispInterpreter::getOperands(const std::vector<string> &expression) {
     std::vector<string> operands(expression.begin() + 1, expression.end());
     return operands;
 }
 
-string LispInterpreter::makeBegin(std::vector<string> seq) {
+string LispInterpreter::makeBegin(const std::vector<string> &seq) {
     std::vector<string> begin{seq};
     begin.insert(begin.begin(), "begin");
     return list(begin);
 }
 
-bool LispInterpreter::isIf(std::vector<string> expression) {
+bool LispInterpreter::isIf(const std::vector<string> &expression) {
     return isTaggedList(expression, "if");
 }
 
-string LispInterpreter::ifPredicate(std::vector<string> expression) {
+string LispInterpreter::ifPredicate(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 4, "IF", 1);
 }
 
-string LispInterpreter::ifConsequent(std::vector<string> expression) {
+string LispInterpreter::ifConsequent(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 4, "IF", 2);
 }
 
-string LispInterpreter::ifAlternative(std::vector<string> expression) {
+string LispInterpreter::ifAlternative(const std::vector<string> &expression) {
     return validatedPositionalGetEq(expression, 4, "IF", 3);
 }
 
-string LispInterpreter::validatedPositionalGetEq(std::vector<string> expression, int length, string name, int pos) {
+string LispInterpreter::validatedPositionalGetEq(const std::vector<string> &expression, int length, const string &name, int pos) {
     if (expression.size() != length) throw std::invalid_argument("Not a valid " + name + "!");
     return expression[pos];
 }
 
-string LispInterpreter::validatedPositionalGetGe(std::vector<string> expression, int length, string name, int pos) {
+string LispInterpreter::validatedPositionalGetGe(const std::vector<string> &expression, int length, const string &name, int pos) {
     if (expression.size() < length) throw std::invalid_argument("Not a valid " + name + "!");
     return expression[pos];
 }
 
-bool LispInterpreter::isSelfEvaluating(string expression) {
+bool LispInterpreter::isSelfEvaluating(const string &expression) {
     if (isTrue(expression) or isFalse(expression) or isNull(expression)) {
         return true;
     } else if (isSymbol(expression)) {
@@ -610,7 +610,7 @@ bool LispInterpreter::isSelfEvaluating(string expression) {
     }
 }
 
-bool LispInterpreter::isString(string expression, bool withQuotes) {
+bool LispInterpreter::isString(const string &expression, bool withQuotes) {
     if (expression.length() > 0 and expression[0] == '(') return false;
     bool escapeActive = false;
     for (int i = 0; i < expression.length(); i++) {
@@ -625,28 +625,28 @@ bool LispInterpreter::isString(string expression, bool withQuotes) {
     return true;
 }
 
-bool LispInterpreter::isQuotedString(string expression) {
+bool LispInterpreter::isQuotedString(const string &expression) {
     return isString(expression, true);
 }
 
-string LispInterpreter::textOfQuotedString(string expression) {
+string LispInterpreter::textOfQuotedString(const string &expression) {
     if (expression.length() < 2 or expression[0] != '"' or expression.back() != '"')
         throw std::invalid_argument("Not a quoted string!");
     return expression.substr(1, expression.length() - 2);
 }
 
-bool LispInterpreter::isSymbol(string expression) {
+bool LispInterpreter::isSymbol(const string &expression) {
     return simpleMatch("'[a-zA-Z0-9]+", expression);
 }
 
-bool LispInterpreter::isVariable(string expression) {
+bool LispInterpreter::isVariable(const string &expression) {
     return simpleMatch("[a-zA-Z0-9_-]+", expression);
 }
 
-bool LispInterpreter::isInt(string expression) {
+bool LispInterpreter::isInt(const string &expression) {
     return simpleMatch("[0-9]+", expression);
 }
 
-bool LispInterpreter::isFloat(string expression) {
+bool LispInterpreter::isFloat(const string &expression) {
     return simpleMatch("[0-9]+[.][0-9]+", expression);
 }

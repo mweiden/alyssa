@@ -20,11 +20,12 @@ class Interpreter {
 public:
     static Symbol nextToken(std::istream &in);
 
-    static string unparens(string expression);
+    static string unparens(const string &expression);
 
-    virtual string eval(string expression) = 0;
+    virtual string eval(const string &expression) = 0;
 
-    virtual string apply(string procedure, std::vector<string> arguments) = 0;
+    virtual string apply(const string &procedure,
+                         const std::vector<string> &arguments) = 0;
 };
 
 
@@ -35,165 +36,191 @@ public:
     ~LispInterpreter();
 
     // eval & apply
-    string eval(string expression);
+    string eval(const string &expression);
 
-    string eval(string expression, Environment *env);
+    string eval(const string &expression, Environment *env);
 
-    string eval(std::vector<string> expression, Environment *env);
+    string eval(const std::vector<string> &expression, Environment *env);
 
-    string apply(string procedure, std::vector<string> arguments);
+    string apply(const string &procedure,
+                 const std::vector<string> &arguments);
 
     // sub-functions of eval and apply
-    string evalIf(std::vector<string> expression, Environment *env);
+    string evalIf(const std::vector<string> &expression, Environment *env);
 
-    string evalAssignment(std::vector<string> expression, Environment *env);
+    string evalAssignment(const std::vector<string> &expression,
+                          Environment *env);
 
-    string evalDefinition(std::vector<string> expression, Environment *env);
+    string evalDefinition(const std::vector<string> &expression,
+                          Environment *env);
 
-    string evalSequence(std::vector<string> expressions, Environment *env);
+    string evalSequence(const std::vector<string> &expressions,
+                        Environment *env);
 
-    std::vector<string> listOfValues(std::vector<string> operands, Environment *env);
+    std::vector<string> listOfValues(const std::vector<string> &operands,
+                                     Environment *env);
 
-    string applyPrimitiveProcedure(string procedure, std::vector<string> args);
+    string applyPrimitiveProcedure(const string &procedure,
+                                   const std::vector<string> &args);
 
     // env management
-    std::unique_ptr<Environment> extendEnvironment(std::vector<string> vars, std::vector<string> vals, Environment *env);
+    std::unique_ptr<Environment> extendEnvironment(
+            const std::vector<string> &vars,
+            const std::vector<string> &vals,
+            Environment *env);
 
     // validataion
-    static void validateExpression(string expression);
+    static void validateExpression(const string &expression);
 
-    bool isPrimitiveProcedure(string name);
+    bool isPrimitiveProcedure(const string &name);
 
-    static bool isTrue(string expression);
+    static bool isTrue(const string &expression);
 
-    static bool isFalse(string expression);
+    static bool isFalse(const string &expression);
 
-    static bool isTaggedList(std::vector<string> list, string tag);
+    static bool isTaggedList(const std::vector<string> &list,
+                             const string &tag);
 
-    static bool isDefinition(std::vector<string> expression);
+    static bool isDefinition(const std::vector<string> &expression);
 
-    static bool isCompoundProcedure(std::vector<string> expression);
+    static bool isCompoundProcedure(const std::vector<string> &expression);
 
-    static string isNull(string name, std::vector<string> seq);
+    static string isNull(const string &name,
+                         const std::vector<string> &seq);
 
-    static bool isNull(string expression);
+    static bool isNull(const string &expression);
 
-    static string isEq(string name, std::vector<string> seq);
+    static string isEq(const string &name,
+                       const std::vector<string> &seq);
 
-    static bool isLambda(std::vector<string> expression);
+    static bool isLambda(const std::vector<string> &expression);
 
-    static bool isAssignment(std::vector<string> expression);
+    static bool isAssignment(const std::vector<string> &expression);
 
-    static bool isBegin(std::vector<string> expression);
+    static bool isBegin(const std::vector<string> &expression);
 
-    static bool isCondition(std::vector<string> expression);
+    static bool isCondition(const std::vector<string> &expression);
 
-    static bool isSymbol(string expression);
+    static bool isSymbol(const string &expression);
 
-    static bool isVariable(string expression);
+    static bool isVariable(const string &expression);
 
-    static bool isInt(string expression);
+    static bool isInt(const string &expression);
 
-    static bool isFloat(string expression);
+    static bool isFloat(const string &expression);
 
-    static bool isCondElseClause(std::vector<string> expression);
+    static bool isCondElseClause(const std::vector<string> &expression);
 
-    static bool isString(string expression, bool withQuotes);
+    static bool isString(const string &expression, bool withQuotes);
 
-    static bool isQuotedString(string expression);
+    static bool isQuotedString(const string &expression);
 
-    static bool isApplication(std::vector<string> expression);
+    static bool isApplication(const std::vector<string> &expression);
 
-    static bool isIf(std::vector<string> expression);
+    static bool isIf(const std::vector<string> &expression);
 
-    static bool isSelfEvaluating(string expression);
+    static bool isSelfEvaluating(const string &expression);
 
     // parsing
-    static std::vector<string> stringToVector(string expressions);
+    static std::vector<string> stringToVector(const string &expressions);
 
-    static string vecToString(std::vector<string> args);
+    static string vecToString(const std::vector<string> &args);
 
-    static std::vector<string> procedureParams(std::vector<string> procedure);
+    static std::vector<string> procedureParams(const std::vector<string> &procedure);
 
-    static string procedureBody(std::vector<string> procedure);
+    static string procedureBody(const std::vector<string> &procedure);
 
-    static string makeProcedure(string parameters, string body, string envName);
+    static string makeProcedure(const string &parameters,
+                                const string &body,
+                                const string &envName);
 
-    Environment *procedureEnv(std::vector<string> procedure);
+    Environment *procedureEnv(const std::vector<string> &procedure);
 
-    static string definitionVariable(std::vector<string> expression);
+    static string definitionVariable(const std::vector<string> &expression);
 
-    static std::vector<string> definitionValue(std::vector<string> expression);
+    static std::vector<string> definitionValue(const std::vector<string> &expression);
 
-    static string list(std::vector<string> args);
+    static string list(const std::vector<string> &args);
 
-    static string list(string name, std::vector<string> args);
+    static string list(const string &name, const std::vector<string> &args);
 
-    static string lambdaParameters(std::vector<string> expression);
+    static string lambdaParameters(const std::vector<string> &expression);
 
-    static string lambdaBody(std::vector<string> expression);
+    static string lambdaBody(const std::vector<string> &expression);
 
-    static std::vector<string> makeLambda(string parameters, string body);
+    static std::vector<string> makeLambda(const string &parameters,
+                                          const string &body);
 
-    static string assignmentVariable(std::vector<string> expression);
+    static string assignmentVariable(const std::vector<string> &expression);
 
-    static string assignmentValue(std::vector<string> expression);
+    static string assignmentValue(const std::vector<string> &expression);
 
-    static std::vector<string> beginActions(std::vector<string> expression);
+    static std::vector<string> beginActions(const std::vector<string> &expression);
 
-    static std::vector<string> condClauses(std::vector<string> expression);
+    static std::vector<string> condClauses(const std::vector<string> &expression);
 
-    static std::vector<string> condActions(std::vector<string> expression);
+    static std::vector<string> condActions(const std::vector<string> &expression);
 
-    static string ifPredicate(std::vector<string> expression);
+    static string ifPredicate(const std::vector<string> &expression);
 
-    static string ifConsequent(std::vector<string> expression);
+    static string ifConsequent(const std::vector<string> &expression);
 
-    static string ifAlternative(std::vector<string> expression);
+    static string ifAlternative(const std::vector<string> &expression);
 
-    static string condPredicate(std::vector<string> expression);
+    static string condPredicate(const std::vector<string> &expression);
 
-    static string condToIf(std::vector<string> expression);
+    static string condToIf(const std::vector<string> &expression);
 
-    static string expandClauses(std::vector<string> clauses);
+    static string expandClauses(const std::vector<string> &clauses);
 
-    static string makeIf(string predicate, string consequent, string alternative);
+    static string makeIf(const string &predicate,
+                         const string &consequent,
+                         const string &alternative);
 
-    static string sequenceToExpression(std::vector<string> seq);
+    static string sequenceToExpression(const std::vector<string> &seq);
 
-    static string getOperator(std::vector<string> expression);
+    static string getOperator(const std::vector<string> &expression);
 
-    static std::vector<string> getOperands(std::vector<string> expression);
+    static std::vector<string> getOperands(const std::vector<string> &expression);
 
-    static string makeBegin(std::vector<string> seq);
+    static string makeBegin(const std::vector<string> &seq);
 
-    static string textOfQuotedString(string expression);
+    static string textOfQuotedString(const string &expression);
 
-    static string validatedPositionalGetEq(std::vector<string> expression, int length, string name, int pos);
+    static string validatedPositionalGetEq(const std::vector<string> &expression,
+                                           int length,
+                                           const string &name,
+                                           int pos);
 
-    static string validatedPositionalGetGe(std::vector<string> expression, int length, string name, int pos);
+    static string validatedPositionalGetGe(const std::vector<string> &expression,
+                                           int length,
+                                           const string &name,
+                                           int pos);
 
     // primitive functions
-    static string car(string name, std::vector<string> seq);
+    static string car(const string &name, const std::vector<string> &seq);
 
-    static string cdr(string name, std::vector<string> seq);
+    static string cdr(const string &name, const std::vector<string> &seq);
 
-    static string cons(string name, std::vector<string> seq);
+    static string cons(const string &name, const std::vector<string> &seq);
 
-    static string cons(string first, string second);
+    static string cons(const string &first, const string &second);
 
-    static string arithmetic(string name, std::vector<string> seq);
+    static string arithmetic(const string &name,
+                             const std::vector<string> &seq);
 
-    template <typename T> static string arithmetic(string name, std::vector<T> seq);
+    template <typename T> static string arithmetic(const string &name,
+                                                   const std::vector<T> &seq);
 
-    static string boolean(string name, std::vector<string> seq);
+    static string boolean(const string &name,
+                          const std::vector<string> &seq);
 
 protected:
     unsigned long frameCount = 0L;
     string globalEnvName;
     std::map<string, Environment *> envs;
 
-    std::map<string, string (*)(string,std::vector<string>)> primitiveProcedures;
+    std::map<string, string (*)(const string&, const std::vector<string>&)> primitiveProcedures;
 };
 
 #endif //INTERPRETER_H
