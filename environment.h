@@ -15,9 +15,8 @@ using std::map;
 
 class Environment {
 public:
-    Environment(string _name) {
-        name = _name;
-    }
+    // Construct an environment optionally linked to an outer environment.
+    Environment(string _name, Environment *_outer = nullptr) : env{}, name(_name), outer(_outer) {}
 
     ~Environment() {
         env.clear();
@@ -34,10 +33,13 @@ public:
 
     string getVariable(Symbol name) {
         auto it = env.find(name);
-        if (it == env.end()) {
-            throw std::out_of_range("Variable '" + symbolToString(name) + "' not found in environment '" + this->name + "'");
+        if (it != env.end()) {
+            return it->second;
         }
-        return it->second;
+        if (outer) {
+            return outer->getVariable(name);
+        }
+        throw std::out_of_range("Variable '" + symbolToString(name) + "' not found in environment '" + this->name + "'");
     }
 
     // string convenience wrappers
@@ -60,6 +62,7 @@ public:
 private:
     map<Symbol, string> env;
     string name;
+    Environment *outer; // link to outer environment (not owned)
 };
 
 #endif //ENVIRONMENT_H
