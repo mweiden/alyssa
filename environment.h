@@ -7,11 +7,10 @@
 
 #include <map>
 #include <stdexcept>
-#include "symbol_table.h"
+#include "ast.h"
 
 using std::string;
 using std::map;
-
 
 class Environment {
 public:
@@ -22,16 +21,25 @@ public:
         env.clear();
     }
 
-    string getName() {
-        return name;
+    string getName() { return name; }
+
+    void setVariable(const string &name, const SExpr &value) { env[name] = value; }
+
+    // Update an existing variable in this environment chain.
+    // Returns true if the variable was found and updated, false otherwise.
+    bool updateVariable(const string &name, const SExpr &value) {
+        auto it = env.find(name);
+        if (it != env.end()) {
+            it->second = value;
+            return true;
+        }
+        if (outer) {
+            return outer->updateVariable(name, value);
+        }
+        return false;
     }
 
-    // symbol-based interface
-    void setVariable(Symbol name, const string &value) {
-        env[name] = value;
-    }
-
-    string getVariable(Symbol name) {
+    SExpr getVariable(const string &name) {
         auto it = env.find(name);
         if (it != env.end()) {
             return it->second;
@@ -39,28 +47,14 @@ public:
         if (outer) {
             return outer->getVariable(name);
         }
-        throw std::out_of_range("Variable '" + symbolToString(name) + "' not found in environment '" + this->name + "'");
+        throw std::out_of_range("Variable '" + name + "' not found in environment '" + this->name + "'");
     }
 
-    // string convenience wrappers
-    void setVariable(const string &name, const string &value) {
-        setVariable(stringToSymbol(name), value);
-    }
-
-    string getVariable(const string &name) {
-        return getVariable(stringToSymbol(name));
-    }
-
-    std::map<Symbol,string>::iterator begin() {
-        return env.begin();
-    };
-
-    std::map<Symbol,string>::iterator end() {
-        return env.end();
-    };
+    map<string, SExpr>::iterator begin() { return env.begin(); }
+    map<string, SExpr>::iterator end() { return env.end(); }
 
 private:
-    map<Symbol, string> env;
+    map<string, SExpr> env;
     string name;
     Environment *outer; // link to outer environment (not owned)
 };
