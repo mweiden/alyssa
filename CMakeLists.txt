@@ -18,6 +18,8 @@ FetchContent_MakeAvailable(googletest)
 add_library(alyssa_lib
   interpreter.cpp
   interpreter.h
+  ast.cpp
+  ast.h
   environment.h
   symbol_table.cpp
   symbol_table.h
