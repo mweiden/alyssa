@@ -155,11 +155,8 @@ string LispInterpreter::eval(const std::vector<string> &expression, Environment 
 
 std::unique_ptr<Environment> LispInterpreter::extendEnvironment(const std::vector<string> &vars, const std::vector<string> &vals, Environment *env) {
     if (vals.size() != vars.size()) throw std::invalid_argument("Vars and vals aren't the same length!");
-    std::unique_ptr<Environment> newEnv(new Environment(env->getName() + std::to_string(frameCount)));
+    std::unique_ptr<Environment> newEnv(new Environment(env->getName() + std::to_string(frameCount), env));
     frameCount++;
-    for (auto it = env->begin(); it != env->end(); ++it) {
-        newEnv->setVariable(it->first, it->second);
-    }
     for (int i = 0; i < vars.size(); i++) {
         newEnv->setVariable(vars[i], vals[i]);
     }
