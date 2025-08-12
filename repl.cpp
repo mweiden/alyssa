@@ -5,26 +5,22 @@
 
 using namespace std;
 
-
 int main() {
-
-    Environment env = Environment("global");
-    LispInterpreter intr = LispInterpreter(&env);
+    Environment env("global");
+    LispInterpreter intr(&env);
 
     cout << "Alyssa P. Hacker's LISP REPL" << endl;
-
+    string line;
     cout << ">> ";
-
-    while(not cin.eof()) {
-        string token = symbolToString(Interpreter::nextToken(cin));
+    while(std::getline(cin, line)){
+        if(line.empty()){ cout << ">> "; continue; }
         try {
-            string result = intr.eval(token);
-            cout << "\033[0;32m" << result << "\033[0m" << endl;
-        }
-        catch (const std::invalid_argument& ia) {
-            cout << "\033[1;31m" << ia.what() << "\033[0m" << endl;
+            SExpr result = intr.eval(line);
+            cout << "\033[0;32m" << toString(result) << "\033[0m" << endl;
+        } catch(const std::exception &e){
+            cout << "\033[1;31m" << e.what() << "\033[0m" << endl;
         }
         cout << ">> ";
-    };
+    }
     cout << endl << "LOGOUT" << endl;
 }

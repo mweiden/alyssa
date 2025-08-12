@@ -8,31 +8,21 @@
 #include <map>
 #include <stdexcept>
 #include "symbol_table.h"
+#include "ast.h"
 
 using std::string;
 using std::map;
 
-
 class Environment {
 public:
-    Environment(string _name) {
-        name = _name;
-    }
+    explicit Environment(string _name) { name = _name; }
+    ~Environment() { env.clear(); }
 
-    ~Environment() {
-        env.clear();
-    }
-
-    string getName() {
-        return name;
-    }
+    string getName() { return name; }
 
     // symbol-based interface
-    void setVariable(Symbol name, const string &value) {
-        env[name] = value;
-    }
-
-    string getVariable(Symbol name) {
+    void setVariable(Symbol name, const SExpr &value) { env[name] = value; }
+    SExpr getVariable(Symbol name) {
         auto it = env.find(name);
         if (it == env.end()) {
             throw std::out_of_range("Variable '" + symbolToString(name) + "' not found in environment '" + this->name + "'");
@@ -41,24 +31,14 @@ public:
     }
 
     // string convenience wrappers
-    void setVariable(const string &name, const string &value) {
-        setVariable(stringToSymbol(name), value);
-    }
+    void setVariable(const string &name, const SExpr &value) { setVariable(stringToSymbol(name), value); }
+    SExpr getVariable(const string &name) { return getVariable(stringToSymbol(name)); }
 
-    string getVariable(const string &name) {
-        return getVariable(stringToSymbol(name));
-    }
-
-    std::map<Symbol,string>::iterator begin() {
-        return env.begin();
-    };
-
-    std::map<Symbol,string>::iterator end() {
-        return env.end();
-    };
+    std::map<Symbol,SExpr>::iterator begin() { return env.begin(); }
+    std::map<Symbol,SExpr>::iterator end() { return env.end(); }
 
 private:
-    map<Symbol, string> env;
+    map<Symbol, SExpr> env;
     string name;
 };
 
