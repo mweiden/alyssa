@@ -4,23 +4,13 @@
 #include "interpreter.h"
 
 #include <iostream>
-#include <regex>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
+#include <cctype>
 
 using std::string;
 using std::map;
-
-
-// helper functions
-bool simpleMatch(const string &rxStr, const string &expression) {
-    std::regex rx(rxStr);
-    std::smatch match;
-    std::regex_match(expression, match, rx);
-    return match.size() == 1;
-}
-
-
 template<typename T>
 T reduce(const std::vector<T> &data,
                 T (*reduceFn)(T, T),
@@ -636,17 +626,34 @@ string LispInterpreter::textOfQuotedString(const string &expression) {
 }
 
 bool LispInterpreter::isSymbol(const string &expression) {
-    return simpleMatch("'[a-zA-Z0-9]+", expression);
+    if (expression.size() < 2 || expression[0] != '\'') return false;
+    return std::all_of(expression.begin() + 1, expression.end(), [](unsigned char c) {
+        return std::isalnum(c);
+    });
 }
 
 bool LispInterpreter::isVariable(const string &expression) {
-    return simpleMatch("[a-zA-Z0-9_-]+", expression);
+    if (expression.empty()) return false;
+    return std::all_of(expression.begin(), expression.end(), [](unsigned char c) {
+        return std::isalnum(c) || c == '_' || c == '-';
+    });
 }
 
 bool LispInterpreter::isInt(const string &expression) {
-    return simpleMatch("[0-9]+", expression);
+    if (expression.empty()) return false;
+    return std::all_of(expression.begin(), expression.end(), [](unsigned char c) {
+        return std::isdigit(c);
+    });
 }
 
 bool LispInterpreter::isFloat(const string &expression) {
-    return simpleMatch("[0-9]+[.][0-9]+", expression);
+    auto dotPos = expression.find('.');
+    if (dotPos == string::npos) return false;
+    if (dotPos == 0 || dotPos == expression.length() - 1) return false;
+    return std::all_of(expression.begin(), expression.begin() + dotPos, [](unsigned char c) {
+               return std::isdigit(c);
+           }) &&
+           std::all_of(expression.begin() + dotPos + 1, expression.end(), [](unsigned char c) {
+               return std::isdigit(c);
+           });
 }
