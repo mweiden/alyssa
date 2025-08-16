@@ -27,7 +27,7 @@ add_library(alyssa_lib
 target_include_directories(alyssa_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(repl repl.cpp)
-target_link_libraries(repl PRIVATE alyssa_lib)
+target_link_libraries(repl PRIVATE alyssa_lib readline)
 
 add_executable(tests test.cpp)
 target_link_libraries(tests PRIVATE alyssa_lib GTest::gmock_main GTest::gtest)
