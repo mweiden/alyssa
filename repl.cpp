@@ -1,7 +1,11 @@
 #include <iostream>
 #include <stdexcept>
-#include <readline/history.h>
 #include <readline/readline.h>
+#if __has_include(<readline/history.h>)
+#include <readline/history.h>
+#else
+extern "C" void add_history(const char*);
+#endif
 #include "interpreter.h"
 #include "environment.h"
 #include "ast.h"
